@@ -323,8 +323,8 @@
                 "text": "Penerima \nEksternal"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -421,9 +421,23 @@
               "isTrustBoundary": false,
               "outOfScope": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "providesAuthentication": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "11111111-1111-4111-8111-111111111107",
+                  "title": "Penyangkalan Tindakan Pengunduhan Dokumen oleh Penerima Eksternal akibat Akses Anonim",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Karena Penerima Eksternal dapat mengunduh dokumen tanpa proses autentikasi maupun verifikasi identitas dan hanya mengandalkan kepemilikan tautan sementara (Asumsi 2), sistem tidak dapat mengaitkan aktivitas unduhan secara pasti ke individu tertentu. Penerima eksternal yang sah dapat menyangkal telah mengunduh atau membocorkan dokumen dengan berdalih bahwa tautan tersebut diakses oleh pihak lain. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
+                  "mitigation": "Catat metadata forensik permintaan secara lengkap pada audit log (alamat IP pengakses, User-Agent perangkat, dan timestamp server tersinkronisasi NTP), batasi jumlah maksimal unduhan per tautan, serta sediakan opsi verifikasi kode OTP email atau PIN akses tambahan untuk dokumen yang bersifat rahasia.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 7,
+                  "score": "4"
+                }
+              ]
             }
           },
           {
@@ -557,8 +571,8 @@
                 "text": "Aplikasi Web \n(Browser)"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -655,12 +669,26 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "11111111-1111-4111-8111-111111111108",
+                  "title": "Kebocoran Token Tautan Sementara melalui Riwayat Browser, Cache, dan Header Referer",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information Disclosure",
+                  "description": "Karena tautan berbagi menggunakan parameter token pada URL sebagai satu-satunya kunci akses tanpa login (Asumsi 2), URL lengkap beserta token berpotensi tersimpan di riwayat peramban (browser history), cache lokal pada perangkat bersama, atau ikut terkirim melalui header HTTP Referer saat halaman memuat sumber daya eksternal. Pihak lain yang mengakses riwayat peramban atau log pihak ketiga dapat mengambil token tersebut dan mengunduh file selama masa aktif 24 jam belum habis. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
+                  "mitigation": "Konfigurasikan header keamanan HTTP Referrer-Policy: no-referrer dan Cache-Control: no-store, no-cache, must-revalidate pada respons halaman unduhan, serta hapus parameter token dari address bar browser menggunakan API history.replaceState() segera setelah sesi unduhan divalidasi oleh klien.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 8,
+                  "score": "4"
+                }
+              ]
             }
           },
           {
@@ -824,11 +852,13 @@
                 "text": "Database\nMetadata"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -925,13 +955,27 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "11111111-1111-4111-8111-111111111109",
+                  "title": "Manipulasi atau Penghapusan Catatan Audit Log dan Status Tautan pada Database Metadata",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Jika terjadi celah injeksi kueri atau penyalahgunaan kredensial database internal, pihak yang tidak berwenang dapat memodifikasi catatan audit log maupun mengubah status tautan yang sudah dicabut menjadi aktif kembali di dalam Database Metadata (Asumsi 4: seluruh riwayat pembuatan, pencabutan, dan pengunduhan bergantung pada integritas tabel log dan status di database ini). Akibatnya, jejak audit menjadi tidak valid dan dokumen yang seharusnya sudah diblokir dapat diunduh ulang. [Penilaian Risiko: Kemungkinan = 1 (Rendah), Dampak = 3 (Tinggi), Skor = 3 (Medium)]",
+                  "mitigation": "Gunakan parameterized query (prepared statements) untuk seluruh akses database, batasi hak akses akun layanan aplikasi (prinsip least privilege) agar tidak memiliki izin UPDATE atau DELETE pada tabel audit log (append-only), serta terapkan hash chaining atau tanda tangan integritas pada setiap baris log.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 9,
+                  "score": "3"
+                }
+              ]
             }
           },
           {
@@ -1796,6 +1840,6 @@
     ],
     "diagramTop": 1,
     "reviewer": "KHARISMA MONIKA DIAN PERTIWI",
-    "threatTop": 6
+    "threatTop": 9
   }
 }
