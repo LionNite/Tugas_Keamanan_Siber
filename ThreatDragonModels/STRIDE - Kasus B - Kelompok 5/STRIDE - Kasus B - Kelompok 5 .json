@@ -2,8 +2,8 @@
   "version": "2.6.2",
   "summary": {
     "title": "STRIDE - Kasus B - Kelompok 5 (IF-04-01)",
-    "owner": "ERASTUS LIUBETA SEPTIAN, NABILAH ROBBANIYAH, ALIF LUTHFAN ADEEFA ",
-    "description": "Pemilik dokumen mengunggah file melalui browser ke Backend Dokumen yang kemudian memisahkan penyimpanan isi file ke Object Storage dan pencatatan detailnya ke Database Metadata. Pemilik membuat tautan berbagi berdurasi 24 jam dan membagikannya kepada penerima eksternal di luar sistem. Penerima eksternal membuka tautan tanpa login untuk mengunduh dokumen melalui perantara Backend Dokumen. Pemilik dapat mencabut tautan kapan saja sebelum kedaluwarsa, sementara seluruh aktivitas pembuatan, pencabutan, dan pengunduhan tercatat dalam audit log yang dipantau oleh Admin Organisasi.\n\nAsumsi teknis secara eksplisit untuk melengkapi detail implementasi Kasus B:\nAsumsi 1: Komunikasi antara browser pengguna dan Backend Dokumen menggunakan protokol HTTPS (TLS), namun validasi logika bisnis tetap bergantung pada pemeriksaan di sisi backend.\nAsumsi 2: Tautan sementara menggunakan parameter token acak pada URL sebagai kunci akses tanpa autentikasi tambahan bagi penerima eksternal.\nAsumsi 3: Object Storage dikonfigurasi sebagai penyimpanan privat yang hanya dapat diakses oleh Backend Dokumen menggunakan kredensial layanan internal.\nAsumsi 4: Pencatatan audit log dilakukan oleh Backend Dokumen setiap kali terjadi aktivitas pembuatan tautan, pencabutan tautan, dan pengunduhan dokumen.\n",
+    "owner": "ERASTUS LIUBETA SEPTIAN, NABILAH ROBBANIYAH, ALIF LUTHFAN ADEEFA",
+    "description": "Pemilik dokumen mengunggah file melalui browser ke Backend Dokumen yang kemudian memisahkan penyimpanan isi file ke Object Storage dan pencatatan detailnya ke Database Metadata. Pemilik membuat tautan berbagi berdurasi 24 jam dan membagikannya kepada penerima eksternal di luar sistem. Penerima eksternal membuka tautan tanpa login untuk mengunduh dokumen melalui perantara Backend Dokumen. Pemilik dapat mencabut tautan kapan saja sebelum kedaluwarsa, sementara seluruh aktivitas pembuatan, pencabutan, dan pengunduhan tercatat dalam audit log yang dipantau oleh Admin Organisasi.\n\nAsumsi teknis secara eksplisit untuk melengkapi detail implementasi Kasus B:\nAsumsi 1: Komunikasi antara browser pengguna dan Backend Dokumen menggunakan protokol HTTPS (TLS), namun autentikasi akun pemilik masih mengandalkan kredensial standar tanpa MFA serta validasi logika bisnis bergantung pada pemeriksaan di sisi backend.\nAsumsi 2: Tautan sementara menggunakan parameter token pada URL sebagai satu-satunya kunci akses tanpa autentikasi tambahan bagi penerima eksternal.\nAsumsi 3: Object Storage dikonfigurasi sebagai penyimpanan privat yang hanya dapat diakses oleh Backend Dokumen menggunakan kredensial layanan internal.\nAsumsi 4: Pencatatan audit log dilakukan oleh Backend Dokumen pada Database Metadata setiap kali terjadi aktivitas pembuatan tautan, pencabutan tautan, dan pengunduhan dokumen.\n",
     "id": 0
   },
   "detail": {
@@ -146,7 +146,7 @@
             },
             "size": {
               "width": 200,
-              "height": 500
+              "height": 520
             },
             "attrs": {
               "label": {
@@ -180,12 +180,12 @@
           },
           {
             "position": {
-              "x": 832.5,
-              "y": -210.00000000000006
+              "x": 830,
+              "y": -215
             },
             "size": {
-              "width": 112.5,
-              "height": 60
+              "width": 120,
+              "height": 75
             },
             "attrs": {
               "text": {
@@ -299,7 +299,7 @@
                   "status": "Open",
                   "severity": "High",
                   "type": "Spoofing",
-                  "description": "Jika pihak luar dapat mencuri atau membajak token sesi milik Pemilik Dokumen (Asumsi 1: akun pemilik belum dilindungi autentikasi multifaktor), maka penyerang dapat menyamar sebagai pemilik sah untuk membuat tautan berbagi baru secara ilegal atau mencabut tautan aktif milik korban. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 3 (Tinggi), Skor = 6 (High)]",
+                  "description": "Mengacu pada Asumsi 1 bahwa autentikasi akun pemilik belum dilindungi autentikasi multifaktor (MFA), jika pihak luar berhasil mencuri atau membajak token sesi milik Pemilik Dokumen, maka penyerang dapat menyamar sebagai pemilik sah untuk membuat tautan berbagi baru secara ilegal atau mencabut tautan aktif milik korban. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 3 (Tinggi), Skor = 6 (High)]",
                   "mitigation": "Wajibkan Multi-Factor Authentication (MFA) pada akun Pemilik Dokumen, terapkan cookie sesi dengan atribut HttpOnly, Secure, dan SameSite=Strict, serta batasi masa aktif sesi login dengan rotasi token berkala.",
                   "modelType": "STRIDE",
                   "new": false,
@@ -311,12 +311,12 @@
           },
           {
             "position": {
-              "x": 832.5,
-              "y": 80
+              "x": 830,
+              "y": 65
             },
             "size": {
-              "width": 112.5,
-              "height": 60
+              "width": 120,
+              "height": 75
             },
             "attrs": {
               "text": {
@@ -430,7 +430,7 @@
                   "status": "Open",
                   "severity": "Medium",
                   "type": "Repudiation",
-                  "description": "Karena Penerima Eksternal dapat mengunduh dokumen tanpa proses autentikasi maupun verifikasi identitas dan hanya mengandalkan kepemilikan tautan sementara (Asumsi 2), sistem tidak dapat mengaitkan aktivitas unduhan secara pasti ke individu tertentu. Penerima eksternal yang sah dapat menyangkal telah mengunduh atau membocorkan dokumen dengan berdalih bahwa tautan tersebut diakses oleh pihak lain. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
+                  "description": "Mengacu pada Asumsi 2 bahwa Penerima Eksternal dapat mengunduh dokumen tanpa proses autentikasi maupun verifikasi identitas dan hanya mengandalkan parameter token pada URL, sistem tidak dapat mengaitkan aktivitas unduhan secara pasti ke individu tertentu. Penerima eksternal yang sah dapat menyangkal telah mengunduh atau membocorkan dokumen dengan berdalih bahwa tautan tersebut diakses oleh pihak lain. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
                   "mitigation": "Catat metadata forensik permintaan secara lengkap pada audit log (alamat IP pengakses, User-Agent perangkat, dan timestamp server tersinkronisasi NTP), batasi jumlah maksimal unduhan per tautan, serta sediakan opsi verifikasi kode OTP email atau PIN akses tambahan untuk dokumen yang bersifat rahasia.",
                   "modelType": "STRIDE",
                   "new": false,
@@ -442,12 +442,12 @@
           },
           {
             "position": {
-              "x": 832.5,
-              "y": -80.00000000000006
+              "x": 830,
+              "y": -80
             },
             "size": {
-              "width": 112.5,
-              "height": 60
+              "width": 120,
+              "height": 75
             },
             "attrs": {
               "text": {
@@ -672,7 +672,7 @@
               "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
-              "isWebApplication": false,
+              "isWebApplication": true,
               "privilegeLevel": "",
               "threats": [
                 {
@@ -681,7 +681,7 @@
                   "status": "Open",
                   "severity": "Medium",
                   "type": "Information Disclosure",
-                  "description": "Karena tautan berbagi menggunakan parameter token pada URL sebagai satu-satunya kunci akses tanpa login (Asumsi 2), URL lengkap beserta token berpotensi tersimpan di riwayat peramban (browser history), cache lokal pada perangkat bersama, atau ikut terkirim melalui header HTTP Referer saat halaman memuat sumber daya eksternal. Pihak lain yang mengakses riwayat peramban atau log pihak ketiga dapat mengambil token tersebut dan mengunduh file selama masa aktif 24 jam belum habis. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
+                  "description": "Mengacu pada Asumsi 2 bahwa tautan berbagi menggunakan parameter token pada URL sebagai satu-satunya kunci akses tanpa login, URL lengkap beserta token berpotensi tersimpan di riwayat peramban (browser history), cache lokal pada perangkat bersama, atau ikut terkirim melalui header HTTP Referer saat halaman memuat sumber daya eksternal. Pihak lain yang mengakses riwayat peramban atau log pihak ketiga dapat mengambil token tersebut dan mengunduh file selama masa aktif 24 jam belum habis. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
                   "mitigation": "Konfigurasikan header keamanan HTTP Referrer-Policy: no-referrer dan Cache-Control: no-store, no-cache, must-revalidate pada respons halaman unduhan, serta hapus parameter token dari address bar browser menggunakan API history.replaceState() segera setelah sesi unduhan divalidasi oleh klien.",
                   "modelType": "STRIDE",
                   "new": false,
@@ -956,7 +956,7 @@
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": true,
-              "isALog": false,
+              "isALog": true,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
@@ -968,7 +968,7 @@
                   "status": "Open",
                   "severity": "Medium",
                   "type": "Tampering",
-                  "description": "Jika terjadi celah injeksi kueri atau penyalahgunaan kredensial database internal, pihak yang tidak berwenang dapat memodifikasi catatan audit log maupun mengubah status tautan yang sudah dicabut menjadi aktif kembali di dalam Database Metadata (Asumsi 4: seluruh riwayat pembuatan, pencabutan, dan pengunduhan bergantung pada integritas tabel log dan status di database ini). Akibatnya, jejak audit menjadi tidak valid dan dokumen yang seharusnya sudah diblokir dapat diunduh ulang. [Penilaian Risiko: Kemungkinan = 1 (Rendah), Dampak = 3 (Tinggi), Skor = 3 (Medium)]",
+                  "description": "Mengacu pada Asumsi 4 bahwa seluruh riwayat pembuatan, pencabutan, dan pengunduhan bergantung pada integritas tabel log dan status di Database Metadata, jika terjadi celah injeksi kueri atau penyalahgunaan kredensial database internal, pihak yang tidak berwenang dapat memodifikasi catatan audit log maupun mengubah status tautan yang sudah dicabut menjadi aktif kembali. Akibatnya, jejak audit menjadi tidak valid dan dokumen yang seharusnya sudah diblokir dapat diunduh ulang. [Penilaian Risiko: Kemungkinan = 1 (Rendah), Dampak = 3 (Tinggi), Skor = 3 (Medium)]",
                   "mitigation": "Gunakan parameterized query (prepared statements) untuk seluruh akses database, batasi hak akses akun layanan aplikasi (prinsip least privilege) agar tidak memiliki izin UPDATE atau DELETE pada tabel audit log (append-only), serta terapkan hash chaining atau tanda tangan integritas pada setiap baris log.",
                   "modelType": "STRIDE",
                   "new": false,
@@ -1108,7 +1108,7 @@
                   "status": "Open",
                   "severity": "High",
                   "type": "Information Disclosure",
-                  "description": "Jika pihak eksternal menemukan tautan langsung menuju lokasi berkas pada Object Storage (Asumsi 3: kebijakan privasi bucket salah dikonfigurasi menjadi publik), maka siapa pun dapat mengunduh isi file fisik secara langsung tanpa melewati pengecekan masa berlaku 24 jam maupun status pencabutan di Backend Dokumen. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 3 (Tinggi), Skor = 6 (High)]",
+                  "description": "Meskipun menurut Asumsi 3 Object Storage dirancang sebagai penyimpanan privat yang hanya diakses Backend Dokumen, jika terjadi kesalahan konfigurasi (misconfiguration) kebijakan privasi bucket menjadi terbuka untuk publik dan pihak eksternal menemukan tautan langsung menuju lokasi berkas, maka siapa pun dapat mengunduh isi file fisik secara langsung tanpa melewati pengecekan masa berlaku 24 jam maupun status pencabutan di Backend Dokumen. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 3 (Tinggi), Skor = 6 (High)]",
                   "mitigation": "Tutup seluruh akses publik pada Object Storage (blokir public read/list bucket), salurkan seluruh unduhan melalui proxy Backend Dokumen (atau gunakan Pre-Signed URL berdurasi maksimal 1 menit setelah validasi), serta aktifkan enkripsi Server-Side Encryption (AES-256).",
                   "modelType": "STRIDE",
                   "new": false,
@@ -1139,15 +1139,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Akses Tautan Sementara",
-              "description": "Permintaan Akses Tautan Sementara (Tanpa Login)",
+              "description": "Permintaan Akses Tautan Sementara (Tanpa Login).",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "88dda8f2-5b83-4515-83e7-8189e052e287",
@@ -1168,8 +1168,8 @@
             },
             "vertices": [
               {
-                "x": 520,
-                "y": 90
+                "x": 540,
+                "y": 85
               }
             ]
           },
@@ -1194,15 +1194,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Data Validasi Tautan & Log",
-              "description": "Data Validasi Tautan (Masa Berlaku 24 Jam, Status Cabut) dan Log",
+              "description": "Data Validasi Tautan (Masa Berlaku 24 Jam, Status Cabut) dan Log.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "TLS",
               "threats": [],
               "trustBoundaryIds": [
                 "d4e35464-351c-4a75-aae5-c41b80c55d0d",
@@ -1221,7 +1221,12 @@
               "cell": "eea58fd2-68a0-4ec5-a423-f16bcff5769b",
               "port": "a29666d0-3fc6-4b23-bafb-a8039569f4a6"
             },
-            "vertices": []
+            "vertices": [
+              {
+                "x": -155,
+                "y": -115
+              }
+            ]
           },
           {
             "shape": "flow",
@@ -1244,15 +1249,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Ambil File \nDokumen",
-              "description": "Ambil Isi File Dokumen untuk Diunduh",
+              "description": "Ambil Isi File Dokumen untuk Diunduh.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "d4e35464-351c-4a75-aae5-c41b80c55d0d",
@@ -1271,7 +1276,12 @@
               "cell": "eea58fd2-68a0-4ec5-a423-f16bcff5769b",
               "port": "a29666d0-3fc6-4b23-bafb-a8039569f4a6"
             },
-            "vertices": []
+            "vertices": [
+              {
+                "x": -155,
+                "y": 25
+              }
+            ]
           },
           {
             "shape": "flow",
@@ -1294,15 +1304,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Simpan File \nDokumen",
-              "description": "Simpan Isi File Dokumen",
+              "description": "Simpan Isi File Dokumen.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "d4e35464-351c-4a75-aae5-c41b80c55d0d",
@@ -1353,15 +1363,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Input Unggah & Kelola Tautan",
-              "description": "Kredensial Login, File Unggahan, Permintaan Buat/Cabut Tautan",
+              "description": "Kredensial Login, File Unggahan, Permintaan Buat/Cabut Tautan.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "88dda8f2-5b83-4515-83e7-8189e052e287",
@@ -1382,16 +1392,16 @@
             },
             "vertices": [
               {
-                "x": 830,
-                "y": -250
+                "x": 740,
+                "y": -235
               },
               {
-                "x": 610,
-                "y": -250
+                "x": 570,
+                "y": -235
               },
               {
-                "x": 410,
-                "y": -230
+                "x": 395,
+                "y": -195
               }
             ]
           },
@@ -1416,15 +1426,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Halaman & Stream Unduhan",
-              "description": "Halaman Opsi Unduh dan Stream File Dokumen",
+              "description": "Halaman Opsi Unduh dan Stream File Dokumen.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "88dda8f2-5b83-4515-83e7-8189e052e287",
@@ -1446,15 +1456,15 @@
             "vertices": [
               {
                 "x": 400,
-                "y": 160
+                "y": 155
               },
               {
                 "x": 600,
-                "y": 180
+                "y": 175
               },
               {
-                "x": 840,
-                "y": 180
+                "x": 835,
+                "y": 175
               }
             ]
           },
@@ -1479,15 +1489,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Request Metadata & Audit Log",
-              "description": "Kredensial Admin dan Permintaan Tinjau Metadata/Log",
+              "description": "Kredensial Admin dan Permintaan Tinjau Metadata/Log.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "88dda8f2-5b83-4515-83e7-8189e052e287",
@@ -1508,12 +1518,12 @@
             },
             "vertices": [
               {
-                "x": 800,
-                "y": -120
+                "x": 790,
+                "y": -115
               },
               {
-                "x": 530,
-                "y": -120
+                "x": 545,
+                "y": -115
               }
             ]
           },
@@ -1538,15 +1548,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Tampilan \nMetadata & Log",
-              "description": "Tampilan Daftar Metadata dan Audit Log",
+              "description": "Tampilan Daftar Metadata dan Audit Log.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "88dda8f2-5b83-4515-83e7-8189e052e287",
@@ -1567,12 +1577,12 @@
             },
             "vertices": [
               {
-                "x": 540,
+                "x": 545,
                 "y": 10
               },
               {
-                "x": 810,
-                "y": 30
+                "x": 795,
+                "y": 25
               }
             ]
           },
@@ -1597,15 +1607,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Info Status & URL Tautan",
-              "description": "Status Unggah, Daftar Tautan Aktif, dan URL Tautan 24 Jam",
+              "description": "Status Unggah, Daftar Tautan Aktif, dan URL Tautan 24 Jam.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "88dda8f2-5b83-4515-83e7-8189e052e287",
@@ -1626,11 +1636,11 @@
             },
             "vertices": [
               {
-                "x": 490,
-                "y": -160
+                "x": 500,
+                "y": -165
               },
               {
-                "x": 610,
+                "x": 635,
                 "y": -180
               }
             ]
@@ -1657,15 +1667,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "API Request Dokumen",
-              "description": "Request API (Unggah File, Token Tautan, Kelola Tautan, Query Admin)",
+              "description": "Request API (Unggah File, Token Tautan, Kelola Tautan, Query Admin).",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": true,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [
                 {
                   "id": "11111111-1111-4111-8111-111111111102",
@@ -1673,7 +1683,7 @@
                   "status": "Open",
                   "severity": "High",
                   "type": "Tampering",
-                  "description": "Jika Penerima Eksternal memodifikasi parameter identitas tautan atau atribut waktu pada permintaan HTTP (Asumsi 2: token tautan menggunakan pola berurutan yang mudah ditebak atau pemeriksaan kedaluwarsa 24 jam bergantung pada input klien), maka penerima dapat mengunduh dokumen milik tautan lain atau melewati batas waktu 24 jam. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 3 (Tinggi), Skor = 6 (High)]",
+                  "description": "Mengacu pada Asumsi 2 bahwa tautan sementara hanya mengandalkan parameter token pada URL tanpa autentikasi tambahan, jika implementasi pembangkitan token menggunakan pola berurutan yang mudah ditebak atau pemeriksaan kedaluwarsa 24 jam bergantung pada input klien, maka penerima eksternal dapat memodifikasi parameter untuk mengunduh dokumen milik tautan lain atau melewati batas waktu 24 jam. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 3 (Tinggi), Skor = 6 (High)]",
                   "mitigation": "Bangkitkan token tautan menggunakan generator acak kriptografis (CSPRNG minimal 128-bit) yang tidak berurutan, dan validasi selisih waktu berlaku 24 jam serta status pencabutan murni menggunakan waktu server pada Database Metadata.",
                   "modelType": "STRIDE",
                   "new": false,
@@ -1700,7 +1710,7 @@
             },
             "vertices": [
               {
-                "x": 200,
+                "x": 205,
                 "y": -110
               }
             ]
@@ -1727,15 +1737,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "Simpan Metadata, \nStatus & Log",
-              "description": "Simpan Metadata, Update Status Cabut, dan Tulis Audit Log",
+              "description": "Simpan Metadata, Update Status Cabut, dan Tulis Audit Log.",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": true,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "TLS",
               "threats": [
                 {
                   "id": "11111111-1111-4111-8111-111111111103",
@@ -1743,7 +1753,7 @@
                   "status": "Open",
                   "severity": "Medium",
                   "type": "Repudiation",
-                  "description": "Jika Pemilik Dokumen atau Penerima Eksternal melakukan pencabutan tautan atau pengunduhan file ketika proses penulisan ke Database Metadata gagal atau tidak mencatat identitas pengakses (Asumsi 4: pencatatan log berjalan secara asinkron tanpa transaksi wajib), maka pelaku dapat menyangkal pernah mengunduh atau mencabut tautan tersebut. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
+                  "description": "Mengacu pada Asumsi 4 bahwa seluruh riwayat pembuatan, pencabutan, dan pengunduhan dicatat oleh Backend Dokumen ke Database Metadata, jika proses penulisan log dijalankan secara asinkron tanpa transaksi wajib atau gagal saat terjadi gangguan teknis sehingga tidak mencatat identitas pengakses, maka pelaku dapat menyangkal pernah mengunduh atau mencabut tautan tersebut. [Penilaian Risiko: Kemungkinan = 2 (Sedang), Dampak = 2 (Sedang), Skor = 4 (Medium)]",
                   "mitigation": "Terapkan transaksi atomik pada Backend Dokumen yang mewajibkan entri audit log (berisi timestamp server, alamat IP pengakses, ID tautan, dan jenis aksi) tersimpan di Database Metadata sebelum file dikirim, serta atur tabel audit log bersifat append-only.",
                   "modelType": "STRIDE",
                   "new": false,
@@ -1800,15 +1810,15 @@
             "data": {
               "type": "tm.Flow",
               "name": "API Response & Stream \nFile",
-              "description": "Respons API (URL Tautan, Stream File, Data Metadata dan Log)",
+              "description": "Respons API (URL Tautan, Stream File, Data Metadata dan Log).",
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
               "threats": [],
               "trustBoundaryIds": [
                 "e2397105-a24c-45f9-abc5-c6d225e3325c",
@@ -1829,7 +1839,7 @@
             },
             "vertices": [
               {
-                "x": 210,
+                "x": 205,
                 "y": 30
               }
             ]
